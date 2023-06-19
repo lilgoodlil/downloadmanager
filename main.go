@@ -6,13 +6,9 @@ import (
 	"time"
 )
 
-var d download.Download = download.Download{
-	Url: "https://sorsore.com/wp-content/uploads/2020/02/kiazhameghashangtare.mp3_83079.mp3",
-	Path:"c:/go/amoopoorang.mp3",
-	SectionNum: 5,
-}
-
 func main() {
+
+	d := download.NewDownload()
 	startTime := time.Now()
 	err := d.Action()
 	if err != nil {

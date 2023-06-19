@@ -19,7 +19,7 @@ type Download struct {
 
 func (d Download) Action() error {
 
-	req, err := d.GetRequest("HEAD")
+	req, err := d.getRequest("HEAD")
 	if err != nil{return fmt.Errorf("request can not set: %s", err)}
 
 	res, err := http.DefaultClient.Do(req)
@@ -49,7 +49,7 @@ func (d Download) Action() error {
 			// ending byte of other sections
 			section[i][1] = section[i][0] + eachSize
 		} else {
-			// ending byte of other sections
+			// ending byte of end section
 			section[i][1] = size - 1
 		}
 	}
@@ -68,7 +68,7 @@ func (d Download) Action() error {
 	return d.mergeFiles(section)
 }
 
-func (d Download) GetRequest(method string) (*http.Request,error){
+func (d Download) getRequest(method string) (*http.Request,error){
 	req, err := http.NewRequest(method,d.Url,nil)
 	if err!= nil{return nil,err}
 	req.Header.Set("downloadmanager","BKv0.0.01")
@@ -77,7 +77,7 @@ func (d Download) GetRequest(method string) (*http.Request,error){
 
 func (d Download) downloadSection (i int, s [2]int)error{
 	fmt.Printf("start downloading section %v\n",i)
-	req, err := d.GetRequest("GET")
+	req, err := d.getRequest("GET")
 	if err != nil {return err}
 	req.Header.Set("Range",fmt.Sprintf("bytes=%v-%v",s[0],s[1]))
 	res, err := http.DefaultClient.Do(req)
@@ -117,4 +117,18 @@ func (d Download) mergeFiles(sections [][2]int) error {
 		}
 	}
 	return nil
+}
+
+
+func NewDownload ()(*Download){
+	var url,path string
+	fmt.Println("Add the URL:")
+	fmt.Scanln(&url)
+	fmt.Println("Add the PATH:")
+	fmt.Scanln(&path)
+	d := new(Download)
+	d.Url = url
+	d.Path = path
+	d.SectionNum = 10
+	return d
 }
